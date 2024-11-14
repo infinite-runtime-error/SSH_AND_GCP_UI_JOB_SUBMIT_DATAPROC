@@ -1,0 +1,42 @@
+SSH Browser Commands to Run Jon through SSH Browser
+
+—> I am doing this project again, so I don’t forget any commands and when I later on read this file, I can get clear idea of how to do this properly
+
+—> First upload all files recursively in VM local machine or directly upload zip file and unzip it
+—> i am gonna upload zip file first
+—> unzip folder here by using command ,
+unzip my_python_package.zip
+
+—> move to this folder
+—> it includes another folder my_package , create a zip file of it as well because this folder includes all python scripts modules that are imported in main.py file
+—> to do this, write this command(you should be present in directory where this folder is present)
+zip my_package
+eg:- zip -r output_filename.zip /path/to/folder
+original command :- zip -r my_package /home/jatin_rana_581187_jr/my_python_project
+
+—> now, we have all required files, now let’s upload all these file to bucket
+—> write these commands
+—> gsutil cp my_package.zip gs://dataproc-staging-us-central1-323213977617-p13ribxq/ (Underline URL is location where we want to store our file in bucket)
+(you must be present in directory where this my_package.zip file is present)
+
+—> gsutil cp main.py gs://dataproc-staging-us-central1-323213977617-p13ribxq/
+(Underline URL is location where we want to store our file in bucket)
+(you must be present in directory where this main.py file is present)
+
+—> now, run main.py script using spark-submit command
+spark-submit --master yarn --deploy-mode client \
+  --py-files gs://dataproc-staging-us-central1-323213977617-p13ribxq/my_package.zip \
+  gs://dataproc-staging-us-central1-323213977617-p13ribxq/main.py
+
+
+—> If you are getting this error , then this means that my_package.zip file is not uploaded properly, so you can upload it directly into bucket from local machine(mac), but first you will need to create zip file in mac of “my_pacakge” folder and then upload it on bucket
+
+
+Now The Task is Done. You can perform same Task on GCP Jobs UI as well
+
+ON GCP UI,
+choose region and your cluster and the under
+‘Main Class or Jar’ , paste url of main.py file from bucket
+and under ‘Additional Python Files’ , paste url of my_package.zip from bucket
+
+and then, click on submit and your job would be successfully running.
